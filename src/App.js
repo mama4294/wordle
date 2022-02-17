@@ -1,25 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Header />
+      <Game />
+      <Keyboard />
     </div>
   );
 }
 
 export default App;
+
+const validWords = [];
+
+function Header() {
+  return (
+    <div className="w-full border border-slate-100 p-2">
+      <h1 className="text-3xl font-bold">Wordle</h1>
+    </div>
+  );
+}
+
+function Game() {
+  return (
+    <>
+      <h1 className="text-3xl font-bold underline">Game</h1>
+      <div className="flex flex-inline bg-slate-100 justify-center">
+        <div className="gameTile">[]</div>
+        <div className="gameTile">[]</div>
+        <div className="gameTile">[]</div>
+        <div className="gameTile">[]</div>
+        <div className="gameTile">[]</div>
+      </div>
+    </>
+  );
+}
+
+function Keyboard() {
+  return <h1 className="text-3xl font-bold underline">Keyboard</h1>;
+}
