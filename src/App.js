@@ -2,10 +2,40 @@ import "./App.css";
 import {useState} from 'react';
 
 function App() {
+  const [letters, setLetters]=useState([
+    {value: "Q", status: "", row: "top"}, 
+    {value: "W", status: "", row: "top"}, 
+    {value: "E", status: "", row: "top"}, 
+    {value: "R", status: "", row: "top"}, 
+    {value: "T", status: "", row: "top"}, 
+    {value: "Y", status: "", row: "top"}, 
+    {value: "U", status: "", row: "top"}, 
+    {value: "I", status: "", row: "top"}, 
+    {value: "O", status: "", row: "top"}, 
+    {value: "P", status: "", row: "top"}, 
+    {value: "A", status: "", row: "middle"}, 
+    {value: "S", status: "", row: "middle"}, 
+    {value: "D", status: "", row: "middle"}, 
+    {value: "F", status: "", row: "middle"}, 
+    {value: "G", status: "", row: "middle"}, 
+    {value: "H", status: "", row: "middle"}, 
+    {value: "J", status: "", row: "middle"}, 
+    {value: "K", status: "", row: "middle"}, 
+    {value: "L", status: "", row: "middle"}, 
+    {value: "Z", status: "", row: "bottom"}, 
+    {value: "X", status: "", row: "bottom"}, 
+    {value: "C", status: "", row: "bottom"}, 
+    {value: "V", status: "", row: "bottom"}, 
+    {value: "B", status: "", row: "bottom"}, 
+    {value: "N", status: "", row: "bottom"}, 
+    {value: "M", status: "", row: "bottom"}, 
+  ])
+
   return (
     <div className="App">
       <Header />
-      <Game />
+      <Game setLetters={setLetters}/>
+      <Keyboard letters={letters}/>
     </div>
   );
 }
@@ -22,20 +52,20 @@ function Header() {
   );
 }
 
-function Game() {
+function Game({setLetters}) {
   const [stageInt, setStageInt] = useState(1);
   return (
-    <>
-    <GridRow active={stageInt===1} setStageInt={setStageInt} stageInt={stageInt}/>
-    <GridRow active={stageInt===2} setStageInt={setStageInt} stageInt={stageInt}/>
-    <GridRow active={stageInt===3} setStageInt={setStageInt} stageInt={stageInt}/>
-    <GridRow active={stageInt===4} setStageInt={setStageInt} stageInt={stageInt}/>
-    <GridRow active={stageInt===5} setStageInt={setStageInt} stageInt={stageInt}/>
-    </>
+    <div className="mb-10">
+    <GridRow active={stageInt===1} setStageInt={setStageInt} stageInt={stageInt} setLetters={setLetters}/>
+    <GridRow active={stageInt===2} setStageInt={setStageInt} stageInt={stageInt} setLetters={setLetters}/>
+    <GridRow active={stageInt===3} setStageInt={setStageInt} stageInt={stageInt} setLetters={setLetters}/>
+    <GridRow active={stageInt===4} setStageInt={setStageInt} stageInt={stageInt} setLetters={setLetters}/>
+    <GridRow active={stageInt===5} setStageInt={setStageInt} stageInt={stageInt} setLetters={setLetters}/>
+    </div>
   );
 }
 
-function GridRow({active, setStageInt, stageInt}){
+function GridRow({active, setStageInt, stageInt, setLetters}){
 
   const [letter1, setLetter1] = useState("")
   const [letter2, setLetter2] = useState("")
@@ -52,9 +82,6 @@ function GridRow({active, setStageInt, stageInt}){
     const guessArr = [letter1, letter2, letter3, letter4, letter5]
 
     setWord(guessArr.join(''))
-    console.log(answerArr)
-    console.log(guessArr)   
-    console.log(word)
 
     //determine if the letters are correct
     let tempArr = [];
@@ -67,6 +94,8 @@ function GridRow({active, setStageInt, stageInt}){
         tempArr[i]="incorrect"
       }
     }
+    //todo add coloring to keyboard based on status
+
     setResultArr(tempArr)
     setStageInt(prevInt => prevInt + 1)
 
@@ -128,6 +157,46 @@ function GameTile({handleKeyUp, onChange, value, status, locked}){
     maxLength='1'
     disabled={locked}
     />  
+  )
+}
+
+function Keyboard({letters}){
+  return (
+    <>
+      <Row letters={letters} row="top"/>
+      <Row letters={letters} row="middle"/>
+      <Row letters={letters} row="bottom"/>
+    </>
+
+  )
+}
+
+function Row({row, letters}){
+return (
+  <div className="w-full">
+    <div className="w-full flex justify-between p-2">
+      {letters.map((letter) =>{
+          return ( letter.row === row && <Key key={letter.value} value={letter.value} status={letter.status} />)
+      })}
+    </div>
+  </div>
+)
+}
+
+function Key({value, status}){
+  let bgColor = "bg-slate-200"
+  if(status==="correct"){
+    bgColor = "bg-green-400"
+  }else if (status==="close"){
+    bgColor = "bg-yellow-400"
+  }else if (status==="incorrect"){
+    bgColor = "bg-slate-500"
+  }
+  return (
+    <button className={`w-8 h-10 rounded ${bgColor}`}
+    onClick={() =>{console.log(value)}}>
+      {value}
+    </button>
   )
 }
 
