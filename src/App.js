@@ -34,7 +34,7 @@ function App() {
   return (
     <div className="App">
       <Header />
-      <Game setLetters={setLetters}/>
+      <Game letters={letters} setLetters={setLetters}/>
       <Keyboard letters={letters}/>
     </div>
   );
@@ -52,27 +52,27 @@ function Header() {
   );
 }
 
-function Game({setLetters}) {
+function Game({letters, setLetters}) {
   const [stageInt, setStageInt] = useState(1);
   return (
     <div className="mb-10">
-    <GridRow active={stageInt===1} setStageInt={setStageInt} stageInt={stageInt} setLetters={setLetters}/>
-    <GridRow active={stageInt===2} setStageInt={setStageInt} stageInt={stageInt} setLetters={setLetters}/>
-    <GridRow active={stageInt===3} setStageInt={setStageInt} stageInt={stageInt} setLetters={setLetters}/>
-    <GridRow active={stageInt===4} setStageInt={setStageInt} stageInt={stageInt} setLetters={setLetters}/>
-    <GridRow active={stageInt===5} setStageInt={setStageInt} stageInt={stageInt} setLetters={setLetters}/>
+    <GridRow active={stageInt===1} setStageInt={setStageInt} stageInt={stageInt} setLetters={setLetters} letters={letters}/>
+    <GridRow active={stageInt===2} setStageInt={setStageInt} stageInt={stageInt} setLetters={setLetters} letters={letters}/>
+    <GridRow active={stageInt===3} setStageInt={setStageInt} stageInt={stageInt} setLetters={setLetters} letters={letters}/>
+    <GridRow active={stageInt===4} setStageInt={setStageInt} stageInt={stageInt} setLetters={setLetters} letters={letters}/>
+    <GridRow active={stageInt===5} setStageInt={setStageInt} stageInt={stageInt} setLetters={setLetters} letters={letters}/>
     </div>
   );
 }
 
-function GridRow({active, setStageInt, stageInt, setLetters}){
+function GridRow({active, setStageInt, stageInt, setLetters, letters}){
 
   const [letter1, setLetter1] = useState("")
   const [letter2, setLetter2] = useState("")
   const [letter3, setLetter3] = useState("")
   const [letter4, setLetter4] = useState("")
   const [letter5, setLetter5] = useState("")
-  const [word, setWord] = useState('')
+  const [guess, setGuess] = useState('')
   const [resultsArr, setResultArr]=useState(["unknown","unknown","unknown","unknown","unknown"])
 
   const handleSubmit = (event) =>{
@@ -81,21 +81,29 @@ function GridRow({active, setStageInt, stageInt, setLetters}){
     let answerArr = answerWord.toUpperCase().split("")
     const guessArr = [letter1, letter2, letter3, letter4, letter5]
 
-    setWord(guessArr.join(''))
+    setGuess(guessArr.join(''))
 
     //determine if the letters are correct
     let tempArr = [];
+    let lettersCopy = [...letters];
+    let letterGuesses = [];
     for (let i = 0; i<5; i++){  
+      
+       //create copy of letters
+      const objIndex = lettersCopy.findIndex(letter => letter.value == guessArr[i])
       if(guessArr[i]===answerArr[i]){
         tempArr[i]="correct"
+        lettersCopy[objIndex].status = "correct"
       }else if(answerArr.includes(guessArr[i])){
         tempArr[i]="close"
+        lettersCopy[objIndex].status = "close"
       }else{
         tempArr[i]="incorrect"
+        lettersCopy[objIndex].status = "incorrect"
       }
     }
-    //todo add coloring to keyboard based on status
 
+    setLetters(lettersCopy)
     setResultArr(tempArr)
     setStageInt(prevInt => prevInt + 1)
 
