@@ -5,7 +5,14 @@ function App() {
   const answerWord = "genny"
   let answerArr = answerWord.toUpperCase().split("")
   const [stageInt, setStageInt] = useState(1);
-  const [inputs, setInputs] = useState([{stage: "1", values: [], status:[]}, {stage: "2", values: [], status:[]}, {stage: "3", values: [], status:[]}, {stage: "4", values: [], status:[]}, {stage: "5", values: [], status:[]}]);
+  const [inputs, setInputs] = useState([
+    {stage: "1", values: [], status:[]}, 
+    {stage: "2", values: [], status:[]}, 
+    {stage: "3", values: [], status:[]}, 
+    {stage: "4", values: [], status:[]}, 
+    {stage: "5", values: [], status:[]}, 
+    {stage: "6", values: [], status:[]},
+  ]);
   const [letters, setLetters]=useState([
     {value: "Q", status: "", row: "top"}, 
     {value: "W", status: "", row: "top"}, 
@@ -59,7 +66,7 @@ function App() {
   }
 
  const handleKeyPress = (event) =>{
-    handleLetter(event.key)
+    handleLetter(event.key, "keyboard")
   }
 
   function isLetter(c) {
@@ -67,10 +74,10 @@ function App() {
   }
 
   function changeLetterStatus(letter, status){
-    const letterIndex = letters.findIndex((obj) => obj.value == letter)
+    const letterIndex = letters.findIndex((obj) => obj.value === letter)
     if(letters[letterIndex].status==="correct"|| status==='correct')
       letters[letterIndex].status="correct"
-      
+
     else if(status === "close"){
       letters[letterIndex].status="close"
 
@@ -80,34 +87,49 @@ function App() {
     }
   }
 
+  function validateWord(word){
+    let valid = true;
+    if(word.length != 5) valid= false;
 
-  const handleLetter = (letter) =>{
+    return valid
+  }
+
+
+  const handleLetter = (letter, loc) =>{
+    console.log(`Handling ${letter} from ${loc}`)
     let currentInputs = [...inputs];
     let currentStageInput = currentInputs[stageInt-1]
     console.log(currentInputs)
-    if(letter == "Enter"){
+    if(letter === "Enter"){
       console.log("submitting")
-      for (let i = 0; i<5; i++){  
-       if(currentStageInput.values[i]===answerArr[i]){
-        currentStageInput.status[i]="correct"
-        changeLetterStatus(currentStageInput.values[i],"correct")
-       }else if(answerArr.includes(currentStageInput.values[i])){
-        currentStageInput.status[i]="close"
-        changeLetterStatus(currentStageInput.values[i],"close")
-       }else{
-         currentStageInput.status[i]="incorrect"
-         changeLetterStatus(currentStageInput.values[i],"incorrect")
-       }
-     }
+      const wordValid = validateWord(currentStageInput.values.join(''))
+      if(wordValid){
+        for (let i = 0; i<5; i++){  
+          if(currentStageInput.values[i]===answerArr[i]){
+           currentStageInput.status[i]="correct"
+           changeLetterStatus(currentStageInput.values[i],"correct")
+          }else if(answerArr.includes(currentStageInput.values[i])){
+           currentStageInput.status[i]="close"
+           changeLetterStatus(currentStageInput.values[i],"close")
+          }else{
+            currentStageInput.status[i]="incorrect"
+            changeLetterStatus(currentStageInput.values[i],"incorrect")
+          }
+        }
+        setStageInt(prevInt => prevInt + 1)
+      }else{
+        alert("Invalid Word")
+      }
 
-      setStageInt(prevInt => prevInt + 1)
+
+
     }
-    else if(letter == "Backspace"){
+    else if(letter === "Backspace"){
       console.log("deleating")
       currentStageInput.values.pop();
     }
     else if(isLetter(letter) && currentStageInput.values.length < 5){
-      console.log("adding")
+      console.log(`Adding ${letter}`)
       currentStageInput.values.push(letter.toUpperCase());
     }
     currentInputs[stageInt-1] = currentStageInput;
@@ -122,7 +144,7 @@ function App() {
     <div className="App">
       <Header />
       <Game letters={letters} setLetters={setLetters} stageInt={stageInt} setStageInt={setStageInt} inputs={inputs}/>
-      <Keyboard letters={letters}/>
+      <Keyboard letters={letters} handleLetter={handleLetter}/>
     </div>
   );
 }
@@ -133,7 +155,7 @@ export default App;
 
 function Header() {
   return (
-    <div className="w-full border-b border-slate-500 p-2 mb-10 pb-4">
+    <div className="w-full border-b border-slate-500 p-2 mb-6 pb-4">
       <h1 className="text-3xl font-bold">Wordle</h1>
     </div>
   );
@@ -142,12 +164,13 @@ function Header() {
 function Game({inputs}) {
 
   return (
-    <div className="mb-10">
+    <div className="mb-6">
     <GridRow inputs={inputs[0]}/>
     <GridRow inputs={inputs[1]}/>
     <GridRow inputs={inputs[2]}/>
     <GridRow inputs={inputs[3]}/>
     <GridRow inputs={inputs[4]}/>
+    <GridRow inputs={inputs[5]}/>
     </div>
   );
 }
@@ -188,30 +211,36 @@ function GameTile({value, status}){
   )
 }
 
-function Keyboard({letters}){
+function Keyboard({letters, handleLetter}){
   return (
     <div className="max-w-md m-auto">
-      <Row letters={letters} row="top"/>
-      <Row letters={letters} row="middle"/>
-      <Row letters={letters} row="bottom"/>
+      <Row letters={letters} handleLetter={handleLetter} row="top"/>
+      <Row letters={letters} handleLetter={handleLetter} row="middle"/>
+      <Row letters={letters} handleLetter={handleLetter} row="bottom"/>
     </div>
 
   )
 }
 
-function Row({row, letters}){
+function Row({row, letters, handleLetter}){
 return (
   <div className="w-full">
-    <div className="w-full flex justify-between p-1">
+    <div className="w-full flex justify-center p-1">
+
+    {row==="bottom" && <Key  output="Enter" handleLetter={handleLetter} width="w-14"/> }
       {letters.map((letter) =>{
-          return ( letter.row === row && <Key key={letter.value} value={letter.value} status={letter.status} />)
+          return ( 
+            letter.row === row && <Key key={letter.value} output={letter.value} status={letter.status} handleLetter={handleLetter} width="w-10"/>
+            )
       })}
+      {row==="bottom" && <Key output="Backspace" display="Del" handleLetter={handleLetter} width="w-14"/> }
+
     </div>
   </div>
 )
 }
 
-function Key({value, status}){
+function Key({output, status, handleLetter, width, display}){
   let bgColor = "bg-slate-200"
   if(status==="correct"){
     bgColor = "bg-green-400 text-white"
@@ -221,9 +250,9 @@ function Key({value, status}){
     bgColor = "bg-slate-500 text-white"
   }
   return (
-    <button className={`w-10 h-12 rounded p-2 font-bold ${bgColor}`}
-    onClick={() =>{console.log(value)}}>
-      {value}
+    <button className={`h-12 rounded p-2 mx-1 font-bold ${bgColor} ${width}`}
+    onClick={() =>{handleLetter(output, "screen keyboard")}}>
+      {display || output}
     </button>
   )
 }
