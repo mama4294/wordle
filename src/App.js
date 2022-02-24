@@ -47,7 +47,7 @@ function App() {
   const [stageInt, setStageInt] = useState(1);
   const [inputs, setInputs] = useState(initialInputs);
   const [letters, setLetters] = useState(initalLetters);
-  const [showModal, setShowModal] = useState({visible: true, status: "win"})
+  const [showModal, setShowModal] = useState({visible: false, status: "win"})
 
   function useEventLister(eventName, handler, element = window) {
     const savedHandler = useRef();
@@ -165,8 +165,7 @@ function newAnswer(){
   return (
     <div className="App">
       <Header />
-      <button onClick={()=>{newGame()}}>{answerWord}</button>
-      {showModal.visible && <Modal showModal={showModal} setShowModal={setShowModal} newGame={newGame}/>}
+      {showModal.visible && <Modal showModal={showModal} setShowModal={setShowModal} newGame={newGame} answerWord={answerWord}/>}
       <Game
         letters={letters}
         setLetters={setLetters}
@@ -183,7 +182,7 @@ export default App;
 
 // const validWords = [];
 
-function Modal ({showModal, setShowModal, newGame}) {
+function Modal ({showModal, setShowModal, newGame, answerWord}) {
   return ( 
     <>
   <div
@@ -209,7 +208,7 @@ function Modal ({showModal, setShowModal, newGame}) {
         {/*body*/}
         <div className="relative p-6 flex-auto">
           <p className="my-4 text-blueGray-500 text-lg leading-relaxed">
-          {showModal.status==="win" ? "You won!" : "You lost"}
+          {showModal.status==="win" ? `You Won! The word was ${answerWord}` : `You lost. The word was ${answerWord}`}
           </p>
         </div>
         {/*footer*/}
