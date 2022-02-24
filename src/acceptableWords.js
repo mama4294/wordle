@@ -1,0 +1,1 @@
+export const acceptableWords = ["genny", "apple", "rates", "billy","tacos"]
