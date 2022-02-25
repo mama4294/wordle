@@ -48,6 +48,7 @@ function App() {
   const [inputs, setInputs] = useState(initialInputs);
   const [letters, setLetters] = useState(initalLetters);
   const [showModal, setShowModal] = useState({visible: false, status: "win"})
+  const [error, setError] = useState("")
 
   function useEventLister(eventName, handler, element = window) {
     const savedHandler = useRef();
@@ -130,7 +131,7 @@ function App() {
           setStageInt((prevInt) => prevInt + 1);
         }
       } else {
-        alert("Invalid Word");
+        showError("Invalid Word")
       }
     } else if (letter === "Backspace") { //Special case: Delete
       console.log("deleating");
@@ -149,6 +150,13 @@ function newAnswer(){
   const index = Math.floor(Math.random()*length)
   return acceptableWords[index]
 
+}
+
+function showError(errorMsg){
+  setTimeout(() => {
+    setError(""); 
+  }, 2000);
+  setError(errorMsg); // show for 2 second
 }
 
 
@@ -172,6 +180,7 @@ function newAnswer(){
         stageInt={stageInt}
         setStageInt={setStageInt}
         inputs={inputs}
+        error={error}
       />
       <Keyboard letters={letters} handleLetter={handleLetter} />
     </div>
@@ -244,9 +253,15 @@ function Header() {
   );
 }
 
-function Game({ inputs }) {
+function Game({ inputs, error }) {
   return (
     <div className="mb-6">
+      {error && 
+      <div className="flex justify-center">
+      <p className="absolute top-16 rounded p-2 mx-1 font-bold bg-slate-800 text-white">{error}
+      </p>
+      </div>
+      }
       <GridRow inputs={inputs[0]} />
       <GridRow inputs={inputs[1]} />
       <GridRow inputs={inputs[2]} />
@@ -285,7 +300,7 @@ function GameTile({ value, status }) {
 
   return (
     <p
-      className={` border h-16 w-16 md:h-24 md:w-24 border-slate-300 m-1 text-4xl font-bold flex items-center justify-center ${bgColor}`}
+      className={` border h-16 w-16 border-slate-300 m-1 text-4xl font-bold flex items-center justify-center ${bgColor}`}
     >
       {value}
     </p>
