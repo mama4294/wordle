@@ -1,9 +1,9 @@
 import "./App.css";
 import { useEffect, useState, useRef } from "react";
 import { acceptableWords } from "./acceptableWords";
+import { answerWords } from "./answerWords";
 
 function App() {
-
   //Inital values
   const initialInputs = [
     { stage: "1", values: [], status: [] },
@@ -12,7 +12,7 @@ function App() {
     { stage: "4", values: [], status: [] },
     { stage: "5", values: [], status: [] },
     { stage: "6", values: [], status: [] },
-  ]
+  ];
   const initalLetters = [
     { value: "Q", status: "", row: "top" },
     { value: "W", status: "", row: "top" },
@@ -40,15 +40,15 @@ function App() {
     { value: "B", status: "", row: "bottom" },
     { value: "N", status: "", row: "bottom" },
     { value: "M", status: "", row: "bottom" },
-  ]
+  ];
 
-  const [answerWord, setAnswerWord] = useState(()=>newAnswer())
+  const [answerWord, setAnswerWord] = useState(() => newAnswer());
   let answerArr = answerWord.toUpperCase().split("");
   const [stageInt, setStageInt] = useState(1);
   const [inputs, setInputs] = useState(initialInputs);
   const [letters, setLetters] = useState(initalLetters);
-  const [showModal, setShowModal] = useState({visible: false, status: "win"})
-  const [error, setError] = useState("")
+  const [showModal, setShowModal] = useState({ visible: false, status: "win" });
+  const [error, setError] = useState("");
 
   function useEventLister(eventName, handler, element = window) {
     const savedHandler = useRef();
@@ -94,7 +94,7 @@ function App() {
   function validateWord(word) {
     let valid = true;
     if (word.length !== 5) valid = false;
-    if (!acceptableWords.includes(word.toLowerCase())) valid = false
+    if (!acceptableWords.includes(word.toLowerCase())) valid = false;
 
     return valid;
   }
@@ -104,7 +104,8 @@ function App() {
     console.log(`Handling ${letter} from ${loc}`);
     let currentInputs = [...inputs];
     let currentStageInput = currentInputs[stageInt - 1];
-    if (letter === "Enter") { //Special case: Submit for grading
+    if (letter === "Enter") {
+      //Special case: Submit for grading
       console.log("submitting");
       const wordValid = validateWord(currentStageInput.values.join(""));
       if (wordValid) {
@@ -122,21 +123,23 @@ function App() {
         }
         if (currentStageInput.values.join("") === answerArr.join("")) {
           //Winner winner
-          setShowModal({visible: true, status: "win"})
+          setShowModal({ visible: true, status: "win" });
         } else if (stageInt > 5) {
           //Loser Loser
-          setShowModal({visible: true, status: "false"})
+          setShowModal({ visible: true, status: "false" });
         } else {
           //Advance to next stage
           setStageInt((prevInt) => prevInt + 1);
         }
       } else {
-        showError("Invalid Word")
+        showError("Invalid Word");
       }
-    } else if (letter === "Backspace") { //Special case: Delete
+    } else if (letter === "Backspace") {
+      //Special case: Delete
       console.log("deleating");
       currentStageInput.values.pop();
-    } else if (isLetter(letter) && currentStageInput.values.length < 5) { //Pressed key is a letter and there is space avalible
+    } else if (isLetter(letter) && currentStageInput.values.length < 5) {
+      //Pressed key is a letter and there is space avalible
       console.log(`Adding ${letter}`);
       currentStageInput.values.push(letter.toUpperCase());
     }
@@ -144,28 +147,26 @@ function App() {
     setInputs(currentInputs);
   };
 
-function newAnswer(){
-  const length = acceptableWords.length;
-  //Select a random index of acceptable words
-  const index = Math.floor(Math.random()*length)
-  return acceptableWords[index]
+  function newAnswer() {
+    const length = answerWords.length;
+    //Select a random index of acceptable words
+    const index = Math.floor(Math.random() * length);
+    return answerWords[index];
+  }
 
-}
-
-function showError(errorMsg){
-  setTimeout(() => {
-    setError(""); 
-  }, 2000);
-  setError(errorMsg); // show for 2 second
-}
-
+  function showError(errorMsg) {
+    setTimeout(() => {
+      setError("");
+    }, 2000);
+    setError(errorMsg); // show for 2 second
+  }
 
   function newGame() {
-    setAnswerWord(newAnswer())  
+    setAnswerWord(newAnswer());
     setInputs(initialInputs);
-    setLetters(initalLetters)
-    setStageInt(1)
-    setShowModal({visible: false, status: "win"})
+    setLetters(initalLetters);
+    setStageInt(1);
+    setShowModal({ visible: false, status: "win" });
   }
 
   useEventLister("keydown", handleKeyPress);
@@ -173,7 +174,14 @@ function showError(errorMsg){
   return (
     <div className="App">
       <Header />
-      {showModal.visible && <Modal showModal={showModal} setShowModal={setShowModal} newGame={newGame} answerWord={answerWord}/>}
+      {showModal.visible && (
+        <Modal
+          showModal={showModal}
+          setShowModal={setShowModal}
+          newGame={newGame}
+          answerWord={answerWord}
+        />
+      )}
       <Game
         letters={letters}
         setLetters={setLetters}
@@ -191,58 +199,58 @@ export default App;
 
 // const validWords = [];
 
-function Modal ({showModal, setShowModal, newGame, answerWord}) {
-  return ( 
+function Modal({ showModal, setShowModal, newGame, answerWord }) {
+  return (
     <>
-  <div
-    className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
-  >
-    <div className="relative w-auto my-6 mx-auto max-w-3xl">
-      {/*content*/}
-      <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-        {/*header*/}
-        <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
-          <h3 className="text-3xl font-semibold">
-            {showModal.status==="win" ? "Congratulations" : "So sorry"}
-          </h3>
-          <button
-            className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-            onClick={() => setShowModal(false)}
-          >
-            <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
-              ×
-            </span>
-          </button>
-        </div>
-        {/*body*/}
-        <div className="relative p-6 flex-auto">
-          <p className="my-4 text-blueGray-500 text-lg leading-relaxed">
-          {showModal.status==="win" ? `You Won! The word was ${answerWord}` : `You lost. The word was ${answerWord}`}
-          </p>
-        </div>
-        {/*footer*/}
-        <div className="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
-          <button
-            className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-            type="button"
-            onClick={() => setShowModal(false)}
-          >
-            Close
-          </button>
-          <button
-            className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-            type="button"
-            onClick={() => newGame()}
-          >
-           New Game
-          </button>
+      <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+        <div className="relative w-auto my-6 mx-auto max-w-3xl">
+          {/*content*/}
+          <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+            {/*header*/}
+            <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
+              <h3 className="text-3xl font-semibold">
+                {showModal.status === "win" ? "Congratulations" : "So sorry"}
+              </h3>
+              <button
+                className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
+                onClick={() => setShowModal(false)}
+              >
+                <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
+                  ×
+                </span>
+              </button>
+            </div>
+            {/*body*/}
+            <div className="relative p-6 flex-auto">
+              <p className="my-4 text-blueGray-500 text-lg leading-relaxed">
+                {showModal.status === "win"
+                  ? `You Won! The word was ${answerWord}`
+                  : `You lost. The word was ${answerWord}`}
+              </p>
+            </div>
+            {/*footer*/}
+            <div className="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
+              <button
+                className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                type="button"
+                onClick={() => setShowModal(false)}
+              >
+                Close
+              </button>
+              <button
+                className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                type="button"
+                onClick={() => newGame()}
+              >
+                New Game
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-  <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
-  </>
-  )
+      <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+    </>
+  );
 }
 
 function Header() {
@@ -256,12 +264,13 @@ function Header() {
 function Game({ inputs, error }) {
   return (
     <div className="mb-6">
-      {error && 
-      <div className="flex justify-center">
-      <p className="absolute top-16 rounded p-2 mx-1 font-bold bg-slate-800 text-white">{error}
-      </p>
-      </div>
-      }
+      {error && (
+        <div className="flex justify-center">
+          <p className="absolute top-16 rounded p-2 mx-1 font-bold bg-slate-800 text-white">
+            {error}
+          </p>
+        </div>
+      )}
       <GridRow inputs={inputs[0]} />
       <GridRow inputs={inputs[1]} />
       <GridRow inputs={inputs[2]} />
@@ -300,7 +309,7 @@ function GameTile({ value, status }) {
 
   return (
     <p
-      className={` border h-16 w-16 border-slate-300 m-1 text-4xl font-bold flex items-center justify-center ${bgColor}`}
+      className={` border h-12 w-12 md:h-16 md:w-16 border-slate-300 m-1 text-4xl font-bold flex items-center justify-center ${bgColor}`}
     >
       {value}
     </p>
