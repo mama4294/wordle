@@ -374,7 +374,7 @@ function Key({ output, status, handleLetter, width, display }) {
   }
   return (
     <button
-      className={`h-12 rounded p-2 mx-1 font-bold ${bgColor} ${width}`}
+      className={`h-12 rounded p-2 mx-1 font-bold bg-white ${bgColor} ${width}`}
       onClick={() => {
         handleLetter(output, "screen keyboard");
       }}
