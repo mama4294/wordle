@@ -1,6 +1,13 @@
 # Wordle
 
-[Wordle](https://www.nytimes.com/games/wordle/index.html) is a daily word based game .
+[Wordle](https://www.nytimes.com/games/wordle/index.html) is a daily word based game. I created a clone of the game as a way to practice my JavaScript skills. I modified the game to allow for multiple games per day.
+
+
+## Technologies Used
+- HTML
+- JavaScript
+- React
+- Tailwinds CSS
 
 ## Structure
 
