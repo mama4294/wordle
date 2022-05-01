@@ -109,6 +109,10 @@ function App() {
     setLetters(initalLetters);
     setStageInt(1);
     setShowModal({ visible: false, status: "win" });
+    window.location.reload(false);
+    // console.log(inputs);
+    // console.log(letters);
+    // console.log(stageInt);
   }
 
   useEventLister("keydown", handleKeyPress);

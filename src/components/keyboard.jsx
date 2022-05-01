@@ -54,10 +54,10 @@ const Keyboard = ({ letters, handleLetter }) => {
       bgColor = "bg-yellow-400";
     } else if (status === "incorrect") {
       bgColor = "bg-slate-500 text-white";
-    }
+    } 
     return (
       <button
-        className={`h-12 rounded p-2 mx-1 font-bold bg-white ${bgColor} ${width}`}
+        className={`h-12 rounded p-2 mx-1 font-bold ${bgColor} ${width}`}
         onClick={() => {
           handleLetter(output, "screen keyboard");
         }}
