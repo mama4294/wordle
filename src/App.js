@@ -19,6 +19,7 @@ function App() {
   let answerArr = answerWord.toUpperCase().split("");
 
   const handleKeyPress = (event) => {
+    event.preventDefault();
     handleLetter(event.key, "keyboard");
   };
 
